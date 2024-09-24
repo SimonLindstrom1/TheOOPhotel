@@ -47,9 +47,9 @@ namespace TheOOPhotel
             if (updateBooking?.ToLower() == "ja")
             {
                 Console.WriteLine("Hur många dagar vill du boka till?: ");
-                int additionalDays = int.Parse(Console.ReadLine());
-                booking.ExtendStay(additionalDays);
-                booking.ShowBookingDetails();
+                lengthOfStayInDays = int.Parse(Console.ReadLine());
+                HotelBooking updatedBooking = new HotelBooking(guest, startDate, lengthOfStayInDays);
+                updatedBooking.ShowBookingDetails();
             }
             else
             {
@@ -65,21 +65,28 @@ namespace TheOOPhotel
     public Person Guest { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public int TotalCost { get; set; }
-    private const int PricePerNight = 1999;
+    public double TotalCost { get; set; }
+    private double PricePerNight = 1999;
 
     public HotelBooking(Person guest, DateTime startDate, int lengthOfStayInDays)
     {
         Guest = guest;
         StartDate = startDate.Add(new TimeSpan(15, 0, 0));
         EndDate = startDate.AddDays(lengthOfStayInDays).Date.Add(new TimeSpan(12, 0, 0));
-        TotalCost = lengthOfStayInDays * PricePerNight;
-    }
+        if(lengthOfStayInDays > 10)
+        {
+            PricePerNight = PricePerNight * 0.9;
+        }
+        else if (lengthOfStayInDays > 20)
+        {
+            PricePerNight = PricePerNight * 0.8;
+        }
+        else if (lengthOfStayInDays > 30)
+        {
+            PricePerNight = PricePerNight * 0.7;
+        }
 
-    public void ExtendStay(int additionalDays)
-    {
-        EndDate = EndDate.AddDays(additionalDays);
-        TotalCost += additionalDays * PricePerNight;
+        TotalCost = Math.Round(lengthOfStayInDays * PricePerNight,2);
     }
 
     public void ShowBookingDetails()
